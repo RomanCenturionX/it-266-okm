@@ -796,22 +796,37 @@ BLASTER / HYPERBLASTER
 
 void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, int effect)
 {
+		vec3_t	offset, start;
 	vec3_t	forward, right;
-	vec3_t	start;
-	vec3_t	offset;
+	//int damage;
+	float	damage_radius;
+	int		radius_damage;
 
+	damage = 100 + (int)(random() * 20.0);
+	radius_damage = 120;
+	damage_radius = 120;
 	if (is_quad)
+	{
 		damage *= 4;
+		radius_damage *= 4;
+	}
+
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
-	VectorSet(offset, 24, 8, ent->viewheight-8);
-	VectorAdd (offset, g_offset, offset);
-	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
+	VectorSet(offset, 8, 8, ent->viewheight-8);
+	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
+	fire_rocket_bounce(ent, start, forward, damage, 800,damage_radius, radius_damage);
+	if(!hyper){
+		fire_rocket_bounce(ent, start, forward, damage, 600,damage_radius, radius_damage);
+		fire_rocket_bounce(ent, start, forward, damage, 1000,damage_radius, radius_damage);
+		fire_rocket_bounce(ent, start, forward, damage, 1600,damage_radius, radius_damage);
+		fire_rocket_bounce(ent, start, forward, damage, 400,damage_radius, radius_damage);
+		fire_rocket_bounce(ent, start, forward, damage, 200,damage_radius, radius_damage);
+	}
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -833,7 +848,7 @@ void Weapon_Blaster_Fire (edict_t *ent)
 		damage = 15;
 	else
 		damage = 10;
-	//Blaster_Fire (ent, vec3_origin, damage, false, EF_BLASTER);
+	Blaster_Fire (ent, vec3_origin, damage, false, EF_BLASTER);
 	ent->client->ps.gunframe++;
 }
 
@@ -841,7 +856,7 @@ void Weapon_Blaster (edict_t *ent)
 {
 	static int	pause_frames[]	= {19, 32, 0};
 	static int	fire_frames[]	= {5, 0};
-	Weapon_Generic (ent, 4, 12, 50, 54, pause_frames, fire_frames, Weapon_RocketLauncher_Fire);
+	Weapon_Generic (ent, 4, 12, 50, 54, pause_frames, fire_frames, Weapon_Blaster_Fire);
 	//Weapon_Generic (ent, 4, 8, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire);
 }
 
