@@ -547,7 +547,7 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 	fire_grenade2 (ent, start, forward, damage, speed, timer, radius, held);
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) ){
-		if(! ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
+		if( ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 		}
 }
@@ -721,7 +721,7 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) ){
-		if(! ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
+		if( ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
 			ent->client->pers.inventory[ent->client->ammo_index]--;
 		}
 	}
@@ -750,7 +750,7 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	int		damage;
 	float	damage_radius;
 	int		radius_damage;
-
+	int		i;
 	damage = 100 + (int)(random() * 20.0);
 	radius_damage = 120;
 	damage_radius = 120;
@@ -768,7 +768,19 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+	if ((!IsFemale(ent))&&(!IsNeutral(ent))){
+			if(ent->skills&SKILL_3){
+				
+				for(i = 0;i < 8; i++){
+					VectorScale (forward, -2, ent->client->kick_origin);
+					ent->client->kick_angles[0] = -1;
 
+					VectorSet(offset, 8+(-4+i), 8, ent->viewheight-8);
+					P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
+					fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+				}
+			}
+	}
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -780,7 +792,7 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) ){
-		if(! ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
+		if( ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
 			ent->client->pers.inventory[ent->client->ammo_index]--;
 		}
 	}
@@ -831,7 +843,7 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	ent->client->kick_angles[0] = -1;
 
 	fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
-	//adding line of death
+	//adding line of death for demolitionist
 	if ((!IsFemale(ent))&&(!IsNeutral(ent))){
 		if(ent->skills&SKILL_6){
 			fire_rocket_bounce(ent, start, forward, damage, 800,damage_radius, radius_damage);
@@ -920,7 +932,7 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 				damage = 20;
 			Blaster_Fire (ent, offset, damage, true, effect);
 			if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) ){
-				if(! ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
+				if( ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
 					ent->client->pers.inventory[ent->client->ammo_index]--;
 				}
 			}
@@ -1038,7 +1050,7 @@ void Machinegun_Fire (edict_t *ent)
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) ){
-		if(! ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
+		if( ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 		}
 }
@@ -1180,7 +1192,7 @@ void Chaingun_Fire (edict_t *ent)
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) ){
-		if(! ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
+		if( ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
 		ent->client->pers.inventory[ent->client->ammo_index] -= shots;
 		}
 	}
@@ -1247,7 +1259,7 @@ void weapon_shotgun_fire (edict_t *ent)
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) ){
-		if(! ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
+		if( ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 	}
 }
@@ -1304,7 +1316,7 @@ void weapon_supershotgun_fire (edict_t *ent)
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) ){
-		if(! ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
+		if( ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
 			ent->client->pers.inventory[ent->client->ammo_index] -= 2;
 		}
 	}
@@ -1372,7 +1384,7 @@ void weapon_railgun_fire (edict_t *ent)
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) ){
-		if(! ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
+		if( ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
 			ent->client->pers.inventory[ent->client->ammo_index]--;
 		}
 	}
@@ -1451,7 +1463,7 @@ void weapon_bfg_fire (edict_t *ent)
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) ){
-		if(! ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
+		if( ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
 			ent->client->pers.inventory[ent->client->ammo_index] -= 50;
 		}
 	}
