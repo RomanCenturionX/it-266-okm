@@ -510,7 +510,7 @@ void print_tree (edict_t *ent){//prints tree based on model/class
 	}
 	else if (IsFemale(ent)){
 		gi.cprintf (ent, PRINT_HIGH, "Anarchist Skill Tree\n");
-		gi.cprintf (ent, PRINT_HIGH, "                      1.Faster Running      2.higher jumps\n");
+		gi.cprintf (ent, PRINT_HIGH, "                      1.Faster Running      2.higher jumps(NI)\n");
 		gi.cprintf (ent, PRINT_HIGH, "3.double explosion    4.More Anarchy(NI)    5.no fall damage    6.digisplosion(NI)\n");
 	}
 	else{

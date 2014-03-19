@@ -995,6 +995,11 @@ void ClientCommand (edict_t *ent)
 		Cmd_Checklvl (ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
+	else if (Q_stricmp(cmd, "addpnt") == 0)//debug option to add points
+	{
+		ent->client->resp.exp+=50;
+		Check_Levelup(ent);
+	}
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

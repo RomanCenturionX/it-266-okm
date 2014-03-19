@@ -9,6 +9,7 @@ Leveling
 Skills (not all of them are implimented
 *Entering addpoint into the console while having a skill point brings up the tree
 *entering addpoint#  (example addpoint5)  adds the skill to the player
+*addpnt just adds exp for testing reasons
 **this is just a bit flag
 **players cannot add a skill without getting the skills above it
 *skills modify weapons and player character
