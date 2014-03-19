@@ -506,16 +506,16 @@ void print_tree (edict_t *ent){//prints tree based on model/class
 	if (IsNeutral(ent)){
 		gi.cprintf (ent, PRINT_HIGH, "Cyborg Skill Tree\n");
 		gi.cprintf (ent, PRINT_HIGH, "                      1.impoved accuracy    2.no kick\n");
-		gi.cprintf (ent, PRINT_HIGH, "3.improved speed      4.no knock back       5.faster rockets    6.infinate ammo\n");
+		gi.cprintf (ent, PRINT_HIGH, "3.improved speed      4.no knock back(NI)   5.faster rockets    6.infinate ammo\n");
 	}
 	else if (IsFemale(ent)){
 		gi.cprintf (ent, PRINT_HIGH, "Anarchist Skill Tree\n");
 		gi.cprintf (ent, PRINT_HIGH, "                      1.Faster Running      2.higher jumps\n");
-		gi.cprintf (ent, PRINT_HIGH, "3.double explosion    4.More Anarchy        5.no fall damage    6.digisplosion\n");
+		gi.cprintf (ent, PRINT_HIGH, "3.double explosion    4.More Anarchy(NI)    5.no fall damage    6.digisplosion(NI)\n");
 	}
 	else{
 		gi.cprintf (ent, PRINT_HIGH, "Demolitionist Skill Tree\n");
-		gi.cprintf (ent, PRINT_HIGH, "                      1.Double Armor        2.Double Health\n");
+		gi.cprintf (ent, PRINT_HIGH, "                      1.Double Armor(NI)    2.Double Health\n");
 		gi.cprintf (ent, PRINT_HIGH, "3.Rocket line         4.Cluster Gernade	  5.Machine Rocket    6.Line Of death\n");
 	}
 				
@@ -560,6 +560,11 @@ void player_lvl (edict_t *ent,int i){
 			gi.cprintf (ent, PRINT_HIGH, "added skill 2\n");
 			ent->skills=curskill|SKILL_2;
 			ent->client->resp.pnts--;
+			if((!IsFemale(ent))&&(!IsNeutral(ent))){//Implimenting double health here
+				ent->max_health=200;
+				ent->health=200;
+				
+			}
 		}
 	}else if(i==3){
 		if(!(curskill&SKILL_1)){
