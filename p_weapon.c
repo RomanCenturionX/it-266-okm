@@ -767,14 +767,16 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
-	if ((!IsFemale(ent))&&(!IsNeutral(ent))){
-			if(ent->skills&SKILL_3){
-				
+	if (IsNeutral(ent)&&ent->skills&SKILL_5){  //Implimenting faster rocket
+		fire_rocket (ent, start, forward, damage, 1000, damage_radius, radius_damage);
+	}else{
+		fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
+	}
+	if ((!IsFemale(ent))&&(!IsNeutral(ent))){  //Implimenting Rocket Line
+			if(ent->skills&SKILL_3){	
 				for(i = 0;i < 8; i++){
 					VectorScale (forward, -2, ent->client->kick_origin);
 					ent->client->kick_angles[0] = -1;
-
 					VectorSet(offset, 8+(-4+i), 8, ent->viewheight-8);
 					P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 					fire_rocket (ent, start, forward, damage, 650, damage_radius, radius_damage);
