@@ -537,6 +537,9 @@ void weapon_grenade_fire (edict_t *ent, qboolean held)
 	radius = damage+40;
 	if (is_quad)
 		damage *= 4;
+	if(IsFemale(ent)&&(ent->skills&SKILL_3)){//Implimenting double explosion
+		radius=radius*2;
+	}
 
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
@@ -771,6 +774,9 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	{
 		damage *= 4;
 		radius_damage *= 4;
+	}
+	if(IsFemale(ent)&&(ent->skills&SKILL_3)){//Implimenting double explosion
+		damage_radius = 240;
 	}
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
