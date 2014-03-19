@@ -711,7 +711,7 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 
 	fire_grenade (ent, start, forward, damage, 600, 2.5, radius);
 	if ((!IsFemale(ent))&&(!IsNeutral(ent))){  //Implimenting cluster grenades Line
-			if(ent->skills&SKILL_3){	
+			if(ent->skills&SKILL_4){	
 				for(i = 0;i < 8; i++){
 				VectorSet(offset, 8, 8, ent->viewheight-8);
 				AngleVectors (ent->client->v_angle, forward, right, NULL);
@@ -1259,11 +1259,22 @@ void weapon_shotgun_fire (edict_t *ent)
 		kick *= 4;
 	}
 
-	if (deathmatch->value)
-		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
-	else
-		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
-
+	if (deathmatch->value){
+		
+		if((IsNeutral(ent))&&(ent->skills&SKILL_1)){//Impliments increased accuracy
+			fire_shotgun (ent, start, forward, damage, kick, 250, 250, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
+		}else{
+			fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
+		}
+	}
+	else{
+		
+		if((IsNeutral(ent))&&(ent->skills&SKILL_1)){
+			fire_shotgun (ent, start, forward, damage, kick, 250, 250, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
+		}else{
+			fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
+		}
+	}
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -1297,7 +1308,8 @@ void weapon_supershotgun_fire (edict_t *ent)
 	vec3_t		v;
 	int			damage = 6;
 	int			kick = 12;
-
+	int			vspred=DEFAULT_SHOTGUN_VSPREAD;
+	int			hspred=DEFAULT_SHOTGUN_HSPREAD;
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 
 	VectorScale (forward, -2, ent->client->kick_origin);
@@ -1311,15 +1323,20 @@ void weapon_supershotgun_fire (edict_t *ent)
 		damage *= 4;
 		kick *= 4;
 	}
-
+		
+		
+		if((IsNeutral(ent))&&(ent->skills&SKILL_1)){//Impliments increased accuracy
+			hspred =DEFAULT_SHOTGUN_HSPREAD/2;
+			vspred = DEFAULT_SHOTGUN_VSPREAD/2;
+		}
 	v[PITCH] = ent->client->v_angle[PITCH];
 	v[YAW]   = ent->client->v_angle[YAW] - 5;
 	v[ROLL]  = ent->client->v_angle[ROLL];
 	AngleVectors (v, forward, NULL, NULL);
-	fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
+	fire_shotgun (ent, start, forward, damage, kick, hspred, vspred, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
 	v[YAW]   = ent->client->v_angle[YAW] + 5;
 	AngleVectors (v, forward, NULL, NULL);
-	fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
+	fire_shotgun (ent, start, forward, damage, kick,hspred, vspred, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
