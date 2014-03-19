@@ -1003,7 +1003,9 @@ void Machinegun_Fire (edict_t *ent)
 	int			damage = 8;
 	int			kick = 2;
 	vec3_t		offset;
-
+	if(IsNeutral(ent)&&(ent->skills&SKILL_2)){ //Implimenting no kick
+		kick=0;
+	}
 	if (!(ent->client->buttons & BUTTON_ATTACK))
 	{
 		ent->client->machinegun_shots = 0;
