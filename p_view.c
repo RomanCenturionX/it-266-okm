@@ -484,7 +484,9 @@ void P_FallingDamage (edict_t *ent)
 	float	delta;
 	int		damage;
 	vec3_t	dir;
-
+	if(IsFemale(ent)&&(ent->skills&SKILL_5)){  //Impliment no fall damage
+		return;
+	}
 	if (ent->s.modelindex != 255)
 		return;		// not in the player model
 
