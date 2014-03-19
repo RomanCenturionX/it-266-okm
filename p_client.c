@@ -508,7 +508,6 @@ void print_tree (edict_t *ent){//prints tree based on model/class
 		gi.cprintf (ent, PRINT_HIGH, "3.double explosion    4.More Anarchy        5.no fall damage    6.digisplosion\n");
 	}
 	else{
-
 		gi.cprintf (ent, PRINT_HIGH, "Demolitionist Skill Tree\n");
 		gi.cprintf (ent, PRINT_HIGH, "                      1.Double Armor        2.Double Health\n");
 		gi.cprintf (ent, PRINT_HIGH, "3.Rocket line         4.Cluster Gernade	  5.Machine Rocket    6.Line Of death\n");

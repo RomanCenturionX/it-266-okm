@@ -808,9 +808,20 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	vec3_t	forward, right;
 	vec3_t	start;
 	vec3_t	offset;
+		//int damage;
+	float	damage_radius;
+ 	int		radius_damage;
+  
+ 	damage = 100 + (int)(random() * 20.0);
+ 	radius_damage = 120;
+ 	damage_radius = 120;
+  	if (is_quad)
+ 	{
+  		damage *= 4;
+ 		radius_damage *= 4;
+ 	}
+ 
 
-	if (is_quad)
-		damage *= 4;
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 24, 8, ent->viewheight-8);
 	VectorAdd (offset, g_offset, offset);
@@ -820,6 +831,19 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	ent->client->kick_angles[0] = -1;
 
 	fire_blaster (ent, start, forward, damage, 1000, effect, hyper);
+	//adding line of death
+	if ((!IsFemale(ent))&&(!IsNeutral(ent))){
+		if(ent->skills&SKILL_6){
+			fire_rocket_bounce(ent, start, forward, damage, 800,damage_radius, radius_damage);
+			if(!hyper){
+ 				fire_rocket_bounce(ent, start, forward, damage, 600,damage_radius, radius_damage);
+ 				fire_rocket_bounce(ent, start, forward, damage, 1000,damage_radius, radius_damage);
+ 				fire_rocket_bounce(ent, start, forward, damage, 1600,damage_radius, radius_damage);
+ 				fire_rocket_bounce(ent, start, forward, damage, 400,damage_radius, radius_damage);
+ 				fire_rocket_bounce(ent, start, forward, damage, 200,damage_radius, radius_damage);
+			}
+		}
+	}
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
