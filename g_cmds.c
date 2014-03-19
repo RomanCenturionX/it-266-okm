@@ -1,7 +1,7 @@
 #include "g_local.h"
 #include "m_player.h"
 
-
+//added comands for leveling and traversing the skill tree
 char *ClientTeam (edict_t *ent)
 {
 	char		*p;
@@ -880,6 +880,17 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
+void Cmd_Checklvl(edict_t *ent)//Skill tree implimentation
+{
+	gi.cprintf (ent, PRINT_HIGH, "lvl %d with %d exp\n", ent->client->resp.lvl, ent->client->resp.exp);
+
+}
+void Cmd_Add_Point(edict_t *ent, int i)//Skill tree implimentation
+{	
+	//sends the comand to the lvl function in p_client
+	player_lvl(ent,i);
+	
+}
 
 /*
 =================
@@ -966,6 +977,22 @@ void ClientCommand (edict_t *ent)
 		Cmd_PutAway_f (ent);
 	else if (Q_stricmp (cmd, "wave") == 0)
 		Cmd_Wave_f (ent);
+	else if (Q_stricmp (cmd, "addpoint") == 0)//lets impliment adding points, every character has a six thing large skill tree
+		Cmd_Add_Point (ent,0);
+	else if (Q_stricmp (cmd, "addpoint1") == 0)//lets impliment adding points, every character has a six thing large skill tree
+		Cmd_Add_Point (ent, 1);
+	else if (Q_stricmp (cmd, "addpoint2") == 0)//lets impliment adding points, every character has a six thing large skill tree
+		Cmd_Add_Point (ent,2);	
+	else if (Q_stricmp (cmd, "addpoint3") == 0)//lets impliment adding points, every character has a six thing large skill tree
+		Cmd_Add_Point (ent,3);	
+	else if (Q_stricmp (cmd, "addpoint4") == 0)//lets impliment adding points, every character has a six thing large skill tree
+		Cmd_Add_Point (ent,4);
+	else if (Q_stricmp (cmd, "addpoint5") == 0)//lets impliment adding points, every character has a six thing large skill tree
+		Cmd_Add_Point (ent,5);	
+	else if (Q_stricmp (cmd, "addpoint6") == 0)//lets impliment adding points, every character has a six thing large skill tree
+		Cmd_Add_Point (ent,6);	
+	else if (Q_stricmp (cmd, "checklvl") == 0)//check level and exp
+		Cmd_Checklvl (ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
 	else	// anything that doesn't match a command will be a chat

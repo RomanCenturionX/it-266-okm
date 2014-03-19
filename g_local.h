@@ -1,4 +1,6 @@
 // g_local.h -- local definitions for game module
+// #I added a lvl and exp counter into the resp structure
+//I also added some flags so my skill system would work
 
 #include "q_shared.h"
 
@@ -189,6 +191,14 @@ typedef struct
 	float	energy_protection;
 	int		armor;
 } gitem_armor_t;
+
+//there are only six skills anyway, lets see if we can do them as Binary flags because why not
+#define	SKILL_1			1		
+#define	SKILL_2			2
+#define SKILL_3			4
+#define SKILL_4			8
+#define SKILL_5			16
+#define SKILL_6			32
 
 
 // gitem_t->flags
@@ -742,6 +752,7 @@ void ClientBeginServerFrame (edict_t *ent);
 //
 void player_pain (edict_t *self, edict_t *other, float kick, int damage);
 void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point);
+void player_lvl (edict_t *self,int i);
 
 //
 // g_svcmds.c
@@ -853,6 +864,10 @@ typedef struct
 	int			enterframe;			// level.framenum the client entered the game
 	int			score;				// frags, etc
 	vec3_t		cmd_angles;			// angles sent over in the last command
+	
+	int exp;  //#player exp
+	int lvl;  //#player lvl
+	int pnts;//#skill points remaining
 
 	qboolean	spectator;			// client is a spectator
 } client_respawn_t;
@@ -1033,6 +1048,8 @@ struct edict_s
 	float		fly_sound_debounce_time;	//move to clientinfo
 	float		last_move_time;
 
+
+	int			skills;
 	int			health;
 	int			max_health;
 	int			gib_health;

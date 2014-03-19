@@ -1,5 +1,6 @@
 #include "g_local.h"
 #include "m_player.h"
+//#added methods for skill tree implimentation
 
 void ClientUserinfoChanged (edict_t *ent, char *userinfo);
 
@@ -189,6 +190,18 @@ qboolean IsNeutral (edict_t *ent)
 	return false;
 }
 
+void Check_Levelup (edict_t *ent){  //function where leveling is managed
+	int curlvl=ent->client->resp.lvl;  //retrieve clients current level
+
+	gi.bprintf (PRINT_MEDIUM,"-----=====%s has %d exp=====-----\n", ent->client->pers.netname, ent->client->resp.exp);//print exp gain
+	if(ent->client->resp.exp >= curlvl*100){ //need more exp for each level
+		ent->client->resp.exp-=curlvl*100; //reset the exp counter
+		ent->client->resp.lvl++;  //increase level
+		ent->client->resp.pnts++;//add a skill point
+		gi.bprintf (PRINT_MEDIUM,"-----=====%s is now level %d!=====-----\n", ent->client->pers.netname, ent->client->resp.lvl); // print level up message
+	}
+}
+
 void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 {
 	int			mod;
@@ -198,6 +211,10 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 
 	if (coop->value && attacker->client)
 		meansOfDeath |= MOD_FRIENDLY_FIRE;
+	
+
+
+
 
 	if (deathmatch->value || coop->value)
 	{
@@ -373,7 +390,11 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 					if (ff)
 						attacker->client->resp.score--;
 					else
+					{
 						attacker->client->resp.score++;
+						attacker->client->resp.exp+=50;  //added increased exp for kills
+						Check_Levelup(attacker);  //new function to manage leveling
+					}
 				}
 				return;
 			}
@@ -384,6 +405,7 @@ void ClientObituary (edict_t *self, edict_t *inflictor, edict_t *attacker)
 	if (deathmatch->value)
 		self->client->resp.score--;
 }
+
 
 
 void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf);
@@ -472,6 +494,98 @@ void LookAtKiller (edict_t *self, edict_t *inflictor, edict_t *attacker)
 		self->client->killer_yaw += 360;
 	
 
+}
+void print_tree (edict_t *ent){//prints tree based on model/class
+
+	if (IsNeutral(ent)){
+		gi.cprintf (ent, PRINT_HIGH, "Cyborg Skill Tree\n");
+		gi.cprintf (ent, PRINT_HIGH, "                      1.impoved accuracy    2.no kick\n");
+		gi.cprintf (ent, PRINT_HIGH, "3.improved speed      4.no knock back       5.faster rockets    6.infinate ammo\n");
+	}
+	else if (IsFemale(ent)){
+		gi.cprintf (ent, PRINT_HIGH, "Anarchist Skill Tree\n");
+		gi.cprintf (ent, PRINT_HIGH, "                      1.Faster Running      2.higher jumps\n");
+		gi.cprintf (ent, PRINT_HIGH, "3.double explosion    4.More Anarchy        5.no fall damage    6.digisplosion\n");
+	}
+	else{
+
+		gi.cprintf (ent, PRINT_HIGH, "Demolitionist Skill Tree\n");
+		gi.cprintf (ent, PRINT_HIGH, "                      1.Double Armor        2.Double Health\n");
+		gi.cprintf (ent, PRINT_HIGH, "3.Rocket line         4.Cluster Gernade	  5.Machine Rocket    6.Line Of death\n");
+	}
+				
+
+
+}
+//player skill up
+void player_lvl (edict_t *ent,int i){
+	int curskill;
+	curskill=ent->skills;
+
+	if(ent->client->resp.pnts<=0){
+		gi.cprintf (ent, PRINT_HIGH, "No skill points availible\n");
+		return;
+	}
+	
+	/*
+		the tree will be like this
+						Skill_1     Skill_2
+						/	|		|	   \
+					Skill_3 Skill_4 Skill_5  Skill_6
+					1       2        3          4
+	*/
+
+	//if  statement that impliments the above tree by checking curskill against skill enums i defined using bitwise math
+	
+	if(i==0){
+		gi.cprintf (ent, PRINT_HIGH, "Choose where to allocate skill point %d\n",ent->client->resp.pnts); //this prints the tree
+		print_tree(ent);
+	}else if(i==1){
+		if(!(curskill&SKILL_1)){
+			gi.cprintf (ent, PRINT_HIGH, "added skill 1\n");
+			ent->skills=curskill|SKILL_1;
+			ent->client->resp.pnts--;
+		}
+	}else if(i==2){
+		if(!(curskill&SKILL_2)){
+			gi.cprintf (ent, PRINT_HIGH, "added skill 2\n");
+			ent->skills=curskill|SKILL_2;
+			ent->client->resp.pnts--;
+		}
+	}else if(i==3){
+		if(!(curskill&SKILL_1)){
+			gi.cprintf (ent, PRINT_HIGH, "unavailible, do not have skill 1\n");
+		}else if(!curskill&SKILL_3){
+			gi.cprintf (ent, PRINT_HIGH, "added skill 3\n");
+			ent->skills=curskill|SKILL_3;
+			ent->client->resp.pnts--;
+		}
+	}else if(i==4){
+		if(!curskill&SKILL_1){
+			gi.cprintf (ent, PRINT_HIGH, "unavailible, do not have skill 1\n");
+		}else if(!curskill&SKILL_4){
+			gi.cprintf (ent, PRINT_HIGH, "added skill 4\n");
+			ent->skills=curskill|SKILL_4;
+			ent->client->resp.pnts--;
+		}
+	}else if(i==5){
+		
+		if(!(curskill&SKILL_2)){
+			gi.cprintf (ent, PRINT_HIGH, "unavailible, do not have skill 2\n");
+		}else if(!(curskill&SKILL_5)){
+			gi.cprintf (ent, PRINT_HIGH, "added skill 5\n");
+			ent->skills=curskill|SKILL_5;
+			ent->client->resp.pnts--;
+		}
+	}else if(i==6){
+		if(!(curskill&SKILL_2)){
+			gi.cprintf (ent, PRINT_HIGH, "unavailible, do not have skill 2\n");
+		}else if(!(curskill&SKILL_6)){
+			gi.cprintf (ent, PRINT_HIGH, "added skill 6\n");
+			ent->skills=curskill|SKILL_6;
+			ent->client->resp.pnts--;
+		}
+	}
 }
 
 /*
@@ -1579,6 +1693,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	}
 
 	pm_passent = ent;
+	
 
 	if (ent->client->chase_target) {
 
