@@ -1003,6 +1003,8 @@ void Machinegun_Fire (edict_t *ent)
 	int			damage = 8;
 	int			kick = 2;
 	vec3_t		offset;
+	int			radius_damage = 60;
+	int			damage_radius = 60;
 	if(IsNeutral(ent)&&(ent->skills&SKILL_2)){ //Implimenting no kick
 		kick=0;
 	}
@@ -1057,8 +1059,12 @@ void Machinegun_Fire (edict_t *ent)
 	AngleVectors (angles, forward, right, NULL);
 	VectorSet(offset, 0, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
-
+	
+	if((!IsFemale(ent))&&!(IsNeutral(ent))&&(ent->skills&SKILL_5)){
+			fire_rocket (ent, start, forward, damage, 800, damage_radius, radius_damage);  //implimenting Machine Rockets
+	}else{
+		fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+	}
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
 	gi.WriteByte (MZ_MACHINEGUN | is_silenced);
@@ -1070,7 +1076,7 @@ void Machinegun_Fire (edict_t *ent)
 		if( ((ent->skills&SKILL_6) && IsNeutral (ent)) ){  //implimenting infinate ammo skill
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 		}
-}
+	}
 
 	ent->client->anim_priority = ANIM_ATTACK;
 	if (ent->client->ps.pmove.pm_flags & PMF_DUCKED)
@@ -1091,6 +1097,7 @@ void Weapon_Machinegun (edict_t *ent)
 	static int	fire_frames[]	= {4, 5, 0};
 
 	Weapon_Generic (ent, 3, 5, 45, 49, pause_frames, fire_frames, Machinegun_Fire);
+	
 }
 
 void Chaingun_Fire (edict_t *ent)

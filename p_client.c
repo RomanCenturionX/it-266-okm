@@ -495,6 +495,12 @@ void LookAtKiller (edict_t *self, edict_t *inflictor, edict_t *attacker)
 	
 
 }
+void stuffcmd(edict_t *ent, char *s) //aparently this allows me to send out cheats at predetermined points
+{
+	gi.WriteByte (11); 
+	gi.WriteString (s);
+	gi.unicast (ent, true); 
+}
 void print_tree (edict_t *ent){//prints tree based on model/class
 
 	if (IsNeutral(ent)){
@@ -541,6 +547,10 @@ void player_lvl (edict_t *ent,int i){
 		print_tree(ent);
 	}else if(i==1){
 		if(!(curskill&SKILL_1)){
+			if(IsFemale(ent)){
+				stuffcmd( ent, "cl_sidespeed 500\n" );  //Lets impliment speed increasses right here
+				stuffcmd( ent, "cl_forwardspeed 500\n" );
+			}
 			gi.cprintf (ent, PRINT_HIGH, "added skill 1\n");
 			ent->skills=curskill|SKILL_1;
 			ent->client->resp.pnts--;
@@ -555,6 +565,10 @@ void player_lvl (edict_t *ent,int i){
 		if(!(curskill&SKILL_1)){
 			gi.cprintf (ent, PRINT_HIGH, "unavailible, do not have skill 1\n");
 		}else if(!curskill&SKILL_3){
+			if(IsNeutral(ent)){
+				stuffcmd( ent, "cl_sidespeed 450\n" );  //Lets impliment speed increasses right here
+				stuffcmd( ent, "cl_forwardspeed 450\n" );
+			}
 			gi.cprintf (ent, PRINT_HIGH, "added skill 3\n");
 			ent->skills=curskill|SKILL_3;
 			ent->client->resp.pnts--;
