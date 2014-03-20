@@ -1,0 +1,23 @@
+Ed Conroy's Peer Review
+
+g_cmds.c:
+Line 980:  Change to a switch for more readability
+
+g_local.h:
+Line 195:  I like the use of the Binary flags but you probably didn't need them considering anyone playing this game will be using computers
+with processing power well beyond the target specs this game was ment for in 1998.
+
+p_client.c:
+Line 545:  Switch statement could have been used here to accomplish same thing.  Makes the code look a little neater.
+
+
+General Comments:
+
+Positive:
+-I like the use of bitwise and-ing your flags.  Keeping them constants and at powers of two is a good idea.
+-Skill trees are implemented well.
+-Code is easy to read and understand.
+-Is consistent with Quake naming conventions making it very easy to decipher what is going on.
+
+Negative:
+-Has huge if-else blocks which can become hard to read after a while.  Should make them switch statements instead.
